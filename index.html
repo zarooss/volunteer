@@ -4,13 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volunteer With Us – Inter-Tertiary Writing Competition</title>
+    <title>Inter-Tertiary Writing Competition Registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         :root {
-            --royal-blue: #004280;
-            --navy-blue: #00234b;
+            --royal-blue: #4169E1;
+            --navy-blue: #000080;
             --black: #000000;
-            --white: #ffffff;
+            --white: #FFFFFF;
         }
         
         * {
@@ -21,532 +23,1083 @@
         }
         
         body {
-            background-color: var(--white);
-            color: var(--black);
-            line-height: 1.6;
-        }
-        
-        header {
-            background: linear-gradient(to right, var(--royal-blue), var(--navy-blue));
-            color: var(--white);
-            padding: 2rem 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        .logo-placeholder {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--royal-blue), var(--navy-blue), var(--black));
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            animation: fadeIn 1s forwards;
+            padding: 20px;
         }
         
-        .logo-img {
+        .container {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
-            height: auto;
-            object-fit: contain;
-        }
-        
-        .header-title {
-            font-size: 1.75rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            text-align: center;
-            opacity: 0;
-            animation: fadeIn 1s 0.3s forwards;
-        }
-        
-        .header-subtitle {
-            font-size: 1.25rem;
-            text-align: center;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            opacity: 0;
-            animation: fadeIn 1s 0.6s forwards;
-        }
-        
-        main {
-            padding: 3rem 1rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .intro-paragraph {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 1.1rem;
-            color: #555;
             max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: slideUp 0.8s forwards;
+            overflow: hidden;
+        }
+        
+        .header {
+            background-color: var(--navy-blue);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo-container {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            max-height: 80px;
+            max-width: 100%;
+        }
+        
+        .title {
+            color: var(--white);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .progress-step {
+            width: 60px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active {
+            background-color: var(--white);
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 50px;
+        }
+        
+        .progress-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
         }
         
         .form-container {
-            background-color: #f8f9fa;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: slideUp 0.8s 0.3s forwards;
+            padding: 40px;
         }
         
-        .form-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--navy-blue);
-            text-align: center;
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
         }
         
-        .form-group {
-            margin-bottom: 1.5rem;
+        .form-step.active {
+            display: block;
         }
         
-        .form-row {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 20px;
         }
         
         @media (min-width: 768px) {
-            .form-row {
+            .form-grid {
                 grid-template-columns: 1fr 1fr;
             }
         }
         
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
+            color: #555;
             font-weight: 600;
-            color: #333;
+            font-size: 14px;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
         }
         
         input, select, textarea {
             width: 100%;
-            padding: 0.75rem;
+            padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 16px;
             transition: all 0.3s ease;
         }
         
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--royal-blue);
-            box-shadow: 0 0 0 3px rgba(0, 66, 128, 0.1);
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
         }
         
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
+        .error {
+            border-color: #e74c3c !important;
         }
         
-        @media (min-width: 768px) {
-            .checkbox-group {
-                grid-template-columns: 1fr 1fr;
-            }
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
-        @media (min-width: 1024px) {
-            .checkbox-group {
-                grid-template-columns: 1fr 1fr 1fr;
-            }
+        .full-width {
+            grid-column: 1 / -1;
         }
         
-        .checkbox-item {
-            display: flex;
-            align-items: center;
+        .payment-info, .writing-category-info {
+            background-color: #f0f7ff;
+            border-left: 4px solid var(--royal-blue);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
         }
         
-        .checkbox-item input {
-            width: auto;
-            margin-right: 0.5rem;
+        .payment-info h3, .writing-category-info h3 {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
         
-        .file-upload {
+        .payment-details, .category-details {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .payment-details strong, .category-details strong {
+            color: #333;
+        }
+        
+        .note {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .upload-container {
             border: 2px dashed #ddd;
             border-radius: 8px;
-            padding: 2rem 1rem;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
         
-        .file-upload:hover {
+        .upload-container:hover {
             border-color: var(--royal-blue);
-            background-color: rgba(0, 66, 128, 0.05);
+            background-color: #f8f9ff;
         }
         
-        .file-upload-icon {
+        .upload-container.error {
+            border-color: #e74c3c;
+        }
+        
+        .upload-icon {
             width: 48px;
             height: 48px;
-            margin: 0 auto 1rem;
+            margin: 0 auto 15px;
+            color: #aaa;
+        }
+        
+        .upload-text {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .upload-subtext {
             color: #999;
+            font-size: 14px;
         }
         
         .file-name {
-            margin-top: 1rem;
-            color: var(--royal-blue);
+            margin-top: 10px;
             font-weight: 600;
+            color: var(--royal-blue);
         }
         
-        .consent-container {
+        .btn-container {
             display: flex;
-            align-items: flex-start;
-            margin: 1rem 0;
+            justify-content: space-between;
+            margin-top: 40px;
         }
         
-        .consent-container input {
-            width: auto;
-            margin-right: 0.75rem;
-            margin-top: 0.25rem;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(to right, var(--royal-blue), var(--navy-blue));
-            color: white;
+        .btn {
+            padding: 12px 30px;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(to right, var(--navy-blue), var(--royal-blue));
+        .btn-prev {
+            background-color: #eee;
+            color: #555;
         }
         
-        .success-message {
+        .btn-prev:hover {
+            background-color: #ddd;
+        }
+        
+        .btn-next, .btn-submit {
+            background-color: var(--royal-blue);
+            color: var(--white);
+        }
+        
+        .btn-next:hover, .btn-submit:hover {
+            background-color: var(--navy-blue);
+        }
+        
+        .success-container {
             text-align: center;
-            padding: 3rem 1rem;
-            display: none;
+            padding: 60px 40px;
         }
         
         .success-icon {
-            width: 64px;
-            height: 64px;
-            background-color: #d4edda;
+            width: 80px;
+            height: 80px;
+            background-color: var(--royal-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: #155724;
+            margin: 0 auto 30px;
+        }
+        
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: var(--white);
         }
         
         .success-title {
-            font-size: 1.75rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
+            font-size: 28px;
+            font-weight: 700;
             color: #333;
+            margin-bottom: 20px;
         }
         
-        .success-text {
-            font-size: 1.1rem;
+        .success-message {
             color: #666;
-            margin-bottom: 0.5rem;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
         
-        footer {
-            background-color: var(--navy-blue);
+        .btn-restart {
+            background-color: var(--royal-blue);
             color: var(--white);
-            padding: 2rem 1rem;
-            margin-top: 4rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .footer-title {
-            font-size: 1.25rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
+        .btn-restart:hover {
+            background-color: var(--navy-blue);
         }
         
-        .social-links a {
-            color: var(--white);
-            text-decoration: none;
-            transition: color 0.3s ease;
+        .hidden {
+            display: none;
         }
         
-        .social-links a:hover {
+        .category-section {
+            margin-bottom: 30px;
+        }
+        
+        .category-option {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-option:hover {
+            border-color: var(--royal-blue);
+            background-color: #f8f9ff;
+        }
+        
+        .category-option.selected {
+            border-color: var(--royal-blue);
+            background-color: #f0f7ff;
+            font-weight: 600;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .category-description {
+            color: #666;
+            font-size: 14px;
+            margin-left: 20px;
+        }
+        
+        .terms-section {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .terms-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .terms-list {
+            list-style-type: none;
+            margin-left: 0;
+            padding-left: 0;
+        }
+        
+        .terms-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .terms-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
             color: var(--royal-blue);
+            font-weight: bold;
         }
         
-        .copyright {
-            font-size: 0.9rem;
-            opacity: 0.75;
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
         }
         
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .checkbox-label {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .submission-info {
+            background-color: #f0f7ff;
+            border-left: 4px solid var(--royal-blue);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo-placeholder">
-                <img src="https://i.ibb.co/21PhmZ2S/IMG-20250627-WA0011-removebg-preview.png " alt="Let's Talk Logo" class="logo-img">
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/nsV3GPpg/IMG-20250627-WA0011-removebg-preview-removebg-preview.png" alt="Let's Talk Logo" class="logo">
             </div>
-            <h1 class="header-title">Volunteer With Us – Inter-Tertiary Writing Competition</h1>
-            <p class="header-subtitle">Be a part of the movement shaping the next generation of creative voices.</p>
+            <h1 class="title">Inter-Tertiary Writing Competition</h1>
+            <p class="subtitle">Hosted by Let's Talk</p>
+            
+            <div class="progress-container">
+                <div class="progress-step active" id="step-1"></div>
+                <div class="progress-step" id="step-2"></div>
+                <div class="progress-step" id="step-3"></div>
+                <div class="progress-step" id="step-4"></div>
+            </div>
+            <div class="progress-labels">
+                <span class="progress-label">Personal</span>
+                <span class="progress-label">Emergency</span>
+                <span class="progress-label">Payment</span>
+                <span class="progress-label">Submission</span>
+            </div>
         </div>
-    </header>
-
-    <main>
-        <p class="intro-paragraph">
-            We are calling on passionate and skilled students from tertiary institutions across Rivers State to volunteer for the Let's Talk Inter-Tertiary Writing Competition. Join us to make an impact while gaining experience, networking, and receiving volunteer certification.
-        </p>
-
-        <div class="form-container" id="volunteerFormContainer">
-            <form id="volunteerForm" action="https://formsubmit.co/mhiztazaro@gmail.com " method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="_next" value="">
+        
+        <div class="form-container">
+            <!-- Form with FormSubmit action -->
+            <form action="https://formsubmit.co/letstalk09866@gmail.com" method="POST" enctype="multipart/form-data" id="registrationForm">
+                <!-- Hidden inputs for FormSubmit -->
+                <input type="hidden" name="_next" value="https://letstalk09866.github.io/inter-tertiary-writing-competition/success.html">
                 <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_subject" value="New Volunteer Application - Inter-Tertiary Writing Competition">
+                <input type="hidden" name="_subject" value="New Writing Competition Registration">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_replyto" id="replytoEmail">
                 
-                <div class="form-row">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active" id="step1">
+                    <h2>Personal Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName" class="required">First Name</label>
+                            <input type="text" id="firstName" name="firstName">
+                            <div class="error-message" id="firstNameError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surname" class="required">Surname</label>
+                            <input type="text" id="surname" name="surname">
+                            <div class="error-message" id="surnameError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="otherNames">Other Names</label>
+                            <input type="text" id="otherNames" name="otherNames">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dateOfBirth" class="required">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" name="dateOfBirth">
+                            <div class="error-message" id="dateOfBirthError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="matricNumber" class="required">Matric Number</label>
+                            <input type="text" id="matricNumber" name="matricNumber">
+                            <div class="error-message" id="matricNumberError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="institution" class="required">Institution</label>
+                            <input type="text" id="institution" name="institution">
+                            <div class="error-message" id="institutionError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="department" class="required">Department</label>
+                            <input type="text" id="department" name="department">
+                            <div class="error-message" id="departmentError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="faculty" class="required">Faculty</label>
+                            <input type="text" id="faculty" name="faculty">
+                            <div class="error-message" id="facultyError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phoneNumber" class="required">Phone Number (WhatsApp)</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber">
+                            <div class="error-message" id="phoneNumberError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="level" class="required">Level</label>
+                            <select id="level" name="level">
+                                <option value="">Select Level</option>
+                                <option value="100 Level">100 Level</option>
+                                <option value="200 Level">200 Level</option>
+                                <option value="300 Level">300 Level</option>
+                                <option value="400 Level">400 Level</option>
+                                <option value="500 Level">500 Level</option>
+                                <option value="Postgraduate">Postgraduate</option>
+                            </select>
+                            <div class="error-message" id="levelError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="stateOfOrigin" class="required">State of Origin</label>
+                            <input type="text" id="stateOfOrigin" name="stateOfOrigin">
+                            <div class="error-message" id="stateOfOriginError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lga" class="required">Local Government Area (LGA)</label>
+                            <input type="text" id="lga" name="lga">
+                            <div class="error-message" id="lgaError"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="currentAddress" class="required">Current Home Address</label>
+                            <textarea id="currentAddress" name="currentAddress" rows="3"></textarea>
+                            <div class="error-message" id="currentAddressError"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="personalEmail" class="required">Personal Email Address</label>
+                            <input type="email" id="personalEmail" name="personalEmail">
+                            <div class="error-message" id="personalEmailError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <div></div>
+                        <button type="button" class="btn btn-next" onclick="nextStep(1)">Next →</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Emergency Contact -->
+                <div class="form-step" id="step2">
+                    <h2>Emergency Contact Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emergencyName" class="required">Full Name</label>
+                            <input type="text" id="emergencyName" name="emergencyName">
+                            <div class="error-message" id="emergencyNameError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyRelationship" class="required">Relationship</label>
+                            <input type="text" id="emergencyRelationship" name="emergencyRelationship">
+                            <div class="error-message" id="emergencyRelationshipError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyPhone" class="required">Phone Number</label>
+                            <input type="tel" id="emergencyPhone" name="emergencyPhone">
+                            <div class="error-message" id="emergencyPhoneError"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="emergencyEmail" class="required">Email Address</label>
+                            <input type="email" id="emergencyEmail" name="emergencyEmail">
+                            <div class="error-message" id="emergencyEmailError"></div>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="emergencyAddress" class="required">Home Address</label>
+                            <textarea id="emergencyAddress" name="emergencyAddress" rows="3"></textarea>
+                            <div class="error-message" id="emergencyAddressError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(2)">← Previous</button>
+                        <button type="button" class="btn btn-next" onclick="nextStep(2)">Next →</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Payment -->
+                <div class="form-step" id="step3">
+                    <h2>Payment Information</h2>
+                    
+                    <div class="payment-info">
+                        <h3>Payment Details</h3>
+                        <div class="payment-details">
+                            <p><strong>Account Number:</strong> 9013374336</p>
+                            <p><strong>Bank:</strong> OPay</p>
+                            <p><strong>Account Name:</strong> Isaac Uduak Zaro</p>
+                            <p><strong>Registration Fee:</strong> ₦5,000</p>
+                        </div>
+                        <p class="note">Note: You must make payment before proceeding. Upload proof of payment below.</p>
+                    </div>
+                    
                     <div class="form-group">
-                        <label for="fullName">Full Name *</label>
-                        <input type="text" id="fullName" name="fullName" required placeholder="Enter your full name">
+                        <label for="paymentProof" class="required">Upload Proof of Payment</label>
+                        <div class="upload-container" id="uploadContainer">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p class="upload-text">Click to upload proof of payment</p>
+                            <p class="upload-subtext">PNG, JPG, PDF up to 10MB</p>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+                        <input type="file" id="paymentProof" name="paymentProof" accept="image/*,.pdf" style="display: none;">
+                        <div class="error-message" id="paymentProofError"></div>
                     </div>
+                    
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(3)">← Previous</button>
+                        <button type="button" class="btn btn-next" onclick="nextStep(3)">Next →</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Writing Category and Submission -->
+                <div class="form-step" id="step4">
+                    <h2>Writing Category and Submission</h2>
+                    
+                    <div class="writing-category-info">
+                        <h3>WRITING CATEGORIES (Select One):</h3>
+                        <p class="category-details">Please choose your preferred category. Your submission will be evaluated based on the category selected:</p>
+                    </div>
+                    
+                    <div class="category-section">
+                        <div class="category-option" onclick="selectCategory('short-story')">
+                            <div class="category-title">1. Short Story Writers</div>
+                            <div class="category-description">- Fiction</div>
+                            <div class="category-description">- Non-Fiction</div>
+                        </div>
+                        
+                        <div class="category-option" onclick="selectCategory('essay')">
+                            <div class="category-title">2. Essay Writers</div>
+                            <div class="category-description">- Personal or opinion-based reflective pieces</div>
+                        </div>
+                        
+                        <div class="category-option" onclick="selectCategory('poetry')">
+                            <div class="category-title">3. Poetry Writers</div>
+                            <div class="category-description">- Original, creative poetry (any form or theme)</div>
+                        </div>
+                        
+                        <div class="category-option" onclick="selectCategory('easy')">
+                            <div class="category-title">4. Easy Writers</div>
+                            <div class="category-description">- Beginner-level creative pieces (for new writers still finding their voice)</div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="selectedCategory" name="selectedCategory">
+                    <div class="error-message" id="categoryError"></div>
+                    
+                    <div class="submission-info">
+                        <h3>SUBMISSION SECTION:</h3>
+                        <p class="category-details">Upload your original writing below. This piece will be used as your qualification entry for the competition.</p>
+                        <ul class="category-details" style="margin-top: 10px; margin-left: 20px;">
+                            <li><strong>Accepted Formats:</strong> .doc, .docx, or .pdf only</li>
+                            <li><strong>Word Limit:</strong> Max 1,500 words (except poetry)</li>
+                        </ul>
+                    </div>
+                    
                     <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required placeholder="you@example.com">
+                        <label for="writingSubmission" class="required">Upload Your Writing</label>
+                        <div class="upload-container" id="writingUploadContainer">
+                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p class="upload-text">Click to upload your writing</p>
+                            <p class="upload-subtext">DOC, DOCX, PDF up to 5MB</p>
+                            <div class="file-name" id="writingFileName"></div>
+                        </div>
+                        <input type="file" id="writingSubmission" name="writingSubmission" accept=".doc,.docx,.pdf" style="display: none;">
+                        <div class="error-message" id="writingSubmissionError"></div>
+                    </div>
+                    
+                    <div class="terms-section">
+                        <h3 class="terms-title">TERMS AND CONDITIONS (Must Agree Before Submitting):</h3>
+                        <ul class="terms-list">
+                            <li>Your submitted piece is <strong>original</strong> and written by you.</li>
+                            <li>Your work will be kept <strong>safe and confidential</strong>, and only used for judging purposes.</li>
+                            <li>You retain <strong>full ownership</strong>, but <strong>Let's Talk</strong> reserves the right to reference winning entries for promotional purposes.</li>
+                            <li>Your submitted entry will serve as your <strong>qualification</strong> into the competition.</li>
+                        </ul>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="termsAgreement" name="termsAgreement">
+                            <label for="termsAgreement" class="checkbox-label">I agree to the terms and conditions</label>
+                        </div>
+                        <div class="error-message" id="termsError"></div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(4)">← Previous</button>
+                        <button type="submit" class="btn btn-submit" id="submitBtn">Submit Registration</button>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone Number (WhatsApp preferred) *</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="+234 XXX XXX XXXX">
-                    </div>
-                    <div class="form-group">
-                        <label for="institution">Tertiary Institution *</label>
-                        <input type="text" id="institution" name="institution" required placeholder="Your university or college">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="course">Course of Study / Department *</label>
-                        <input type="text" id="course" name="course" required placeholder="e.g., Mass Communication">
-                    </div>
-                    <div class="form-group">
-                        <label for="level">Level / Year of Study *</label>
-                        <input type="text" id="level" name="level" required placeholder="e.g., 300 Level, Year 3">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Preferred Volunteer Role(s) *</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="publicity" name="roles" value="Publicity & Social Media">
-                            <label for="publicity">Publicity & Social Media</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="eventPlanning" name="roles" value="Event Planning & Logistics">
-                            <label for="eventPlanning">Event Planning & Logistics</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="judging" name="roles" value="Judging & Editorial Support">
-                            <label for="judging">Judging & Editorial Support</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="technical" name="roles" value="Technical / ICT Support">
-                            <label for="technical">Technical / ICT Support</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="media" name="roles" value="Media (Photo/Video)">
-                            <label for="media">Media (Photo/Video)</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="pr" name="roles" value="PR & Communications">
-                            <label for="pr">PR & Communications</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="onsite" name="roles" value="On-site Coordination">
-                            <label for="onsite">On-site Coordination</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="registration" name="roles" value="Registration / Front Desk">
-                            <label for="registration">Registration / Front Desk</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="ushering" name="roles" value="Ushering & Guest Coordination">
-                            <label for="ushering">Ushering & Guest Coordination</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="motivation">Why do you want to volunteer? *</label>
-                    <textarea id="motivation" name="motivation" rows="4" required placeholder="Tell us why you're interested in volunteering..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="idFile">Upload Student ID or Any School-Affiliated ID *</label>
-                    <div class="file-upload" id="fileUploadArea">
-                        <svg class="file-upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                        <p>Click to upload or drag and drop</p>
-                        <p class="small">PNG, JPG, GIF or PDF (max. 10MB)</p>
-                        <span id="fileName" class="file-name"></span>
-                    </div>
-                    <input type="file" id="idFile" name="idFile" accept="image/*,.pdf" style="display: none;" required>
-                </div>
-
-                <div class="consent-container">
-                    <input type="checkbox" id="consent" name="consent" required>
-                    <label for="consent">I agree to commit to the responsibilities assigned during the planning and execution of the competition.</label>
-                </div>
-
-                <button type="submit" class="submit-btn">Submit Application</button>
             </form>
-
-            <div class="success-message" id="successMessage">
+            
+            <!-- Success Message -->
+            <div class="success-container hidden" id="successContainer">
                 <div class="success-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h3 class="success-title">Thank You!</h3>
-                <p class="success-text">Your volunteer application has been successfully submitted.</p>
-                <p>We'll review your application and get back to you soon.</p>
+                <h2 class="success-title">Registration Successful!</h2>
+                <p class="success-message">Thank you for registering for the Inter-Tertiary Writing Competition hosted by Let's Talk.<br><br>Your submission has been received. Please check your email for further instructions.</p>
+                <button type="button" class="btn-restart" onclick="restartForm()">Register Another Participant</button>
             </div>
         </div>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <p class="footer-title">Powered by Let’s Talk</p>
-            <div class="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">Twitter</a>
-                <a href="#">Facebook</a>
-                <a href="#">WhatsApp</a>
-            </div>
-            <p class="copyright">&copy; <span id="currentYear">2023</span> Let's Talk. All rights reserved.</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current year
-            document.getElementById('currentYear').textContent = new Date().getFullYear();
-            
-            // File upload handling
-            const fileUploadArea = document.getElementById('fileUploadArea');
-            const fileInput = document.getElementById('idFile');
-            const fileName = document.getElementById('fileName');
-            
-            fileUploadArea.addEventListener('click', function() {
-                fileInput.click();
-            });
-            
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    fileName.textContent = this.files[0].name;
+        // Cloudinary configuration
+        const CLOUD_NAME = "dndsdqa8gif"; // Temporary public demo cloud name
+        const UPLOAD_PRESET = "writing-comp";
+        
+        let currentStep = 1;
+        
+        function updateProgress(step) {
+            for (let i = 1; i <= 4; i++) {
+                const stepElement = document.getElementById(`step-${i}`);
+                if (i <= step) {
+                    stepElement.classList.add('active');
                 } else {
-                    fileName.textContent = '';
+                    stepElement.classList.remove('active');
                 }
+            }
+        }
+        
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(stepDiv => {
+                stepDiv.classList.remove('active');
             });
             
-            // Form submission with AJAX to keep our success message
-            const volunteerForm = document.getElementById('volunteerForm');
-            const volunteerFormContainer = document.getElementById('volunteerFormContainer');
-            const successMessage = document.getElementById('successMessage');
+            // Show current step
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+            updateProgress(step);
+        }
+        
+        function selectCategory(category) {
+            // Remove selected class from all options
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('selected');
+            });
             
-            volunteerForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            // Add selected class to clicked option
+            event.currentTarget.classList.add('selected');
+            
+            // Set the hidden input value
+            document.getElementById('selectedCategory').value = category;
+            
+            // Clear error
+            document.getElementById('categoryError').textContent = '';
+        }
+        
+        function validateStep(step) {
+            let isValid = true;
+            let firstInvalidField = null;
+            
+            // Clear all errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+            });
+            document.querySelectorAll('.error').forEach(el => {
+                el.classList.remove('error');
+            });
+            
+            if (step === 1) {
+                const fields = [
+                    { id: 'firstName', message: 'First Name is required' },
+                    { id: 'surname', message: 'Surname is required' },
+                    { id: 'dateOfBirth', message: 'Date of Birth is required' },
+                    { id: 'matricNumber', message: 'Matric Number is required' },
+                    { id: 'institution', message: 'Institution is required' },
+                    { id: 'department', message: 'Department is required' },
+                    { id: 'faculty', message: 'Faculty is required' },
+                    { id: 'phoneNumber', message: 'Phone Number is required' },
+                    { id: 'level', message: 'Please select your level', isSelect: true },
+                    { id: 'stateOfOrigin', message: 'State of Origin is required' },
+                    { id: 'lga', message: 'LGA is required' },
+                    { id: 'currentAddress', message: 'Current Home Address is required' },
+                    { id: 'personalEmail', message: 'Email is required', isEmail: true }
+                ];
                 
-                // Show loading state
-                const submitBtn = this.querySelector('.submit-btn');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Submitting...';
-                submitBtn.disabled = true;
-                
-                const formData = new FormData(this);
-                
-                try {
-                    const response = await fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
+                fields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    let value = element.value.trim();
+                    
+                    if (field.isSelect && value === "") {
+                        isValid = false;
+                        document.getElementById(`${field.id}Error`).textContent = field.message;
+                        element.classList.add('error');
+                        if (!firstInvalidField) firstInvalidField = element;
+                    } else if (!field.isSelect && value === "") {
+                        isValid = false;
+                        document.getElementById(`${field.id}Error`).textContent = field.message;
+                        element.classList.add('error');
+                        if (!firstInvalidField) firstInvalidField = element;
+                    } else if (field.isEmail && value !== "") {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(value)) {
+                            isValid = false;
+                            document.getElementById(`${field.id}Error`).textContent = 'Email is invalid';
+                            element.classList.add('error');
+                            if (!firstInvalidField) firstInvalidField = element;
                         }
-                    });
-                    
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    
-                    if (response.ok) {
-                        // Show our success message
-                        volunteerForm.style.display = 'none';
-                        successMessage.style.display = 'block';
-                        
-                        // Reset form after 3 seconds
-                        setTimeout(function() {
-                            successMessage.style.display = 'none';
-                            volunteerForm.reset();
-                            fileName.textContent = '';
-                            volunteerForm.style.display = 'block';
-                        }, 3000);
-                    } else {
-                        alert('There was an error submitting your form. Please try again.');
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    alert('There was an error submitting your form. Please try again.');
+                });
+                
+                // Set reply-to email
+                document.getElementById('replytoEmail').value = document.getElementById('personalEmail').value;
+            } else if (step === 2) {
+                const fields = [
+                    { id: 'emergencyName', message: 'Full Name is required' },
+                    { id: 'emergencyRelationship', message: 'Relationship is required' },
+                    { id: 'emergencyPhone', message: 'Phone Number is required' },
+                    { id: 'emergencyEmail', message: 'Email is required', isEmail: true },
+                    { id: 'emergencyAddress', message: 'Home Address is required' }
+                ];
+                
+                fields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    let value = element.value.trim();
+                    
+                    if (value === "") {
+                        isValid = false;
+                        document.getElementById(`${field.id}Error`).textContent = field.message;
+                        element.classList.add('error');
+                        if (!firstInvalidField) firstInvalidField = element;
+                    } else if (field.isEmail) {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(value)) {
+                            isValid = false;
+                            document.getElementById(`${field.id}Error`).textContent = 'Email is invalid';
+                            element.classList.add('error');
+                            if (!firstInvalidField) firstInvalidField = element;
+                        }
+                    }
+                });
+            } else if (step === 3) {
+                const paymentProof = document.getElementById('paymentProof');
+                if (!paymentProof.files || paymentProof.files.length === 0) {
+                    isValid = false;
+                    document.getElementById('paymentProofError').textContent = 'Proof of payment is required';
+                    document.getElementById('uploadContainer').classList.add('error');
+                    firstInvalidField = paymentProof;
+                }
+            } else if (step === 4) {
+                // Validate category selection
+                const selectedCategory = document.getElementById('selectedCategory').value;
+                if (!selectedCategory) {
+                    isValid = false;
+                    document.getElementById('categoryError').textContent = 'Please select a writing category';
+                    if (!firstInvalidField) firstInvalidField = document.querySelector('.category-option');
+                }
+                
+                // Validate writing submission
+                const writingSubmission = document.getElementById('writingSubmission');
+                if (!writingSubmission.files || writingSubmission.files.length === 0) {
+                    isValid = false;
+                    document.getElementById('writingSubmissionError').textContent = 'Please upload your writing';
+                    document.getElementById('writingUploadContainer').classList.add('error');
+                    if (!firstInvalidField) firstInvalidField = writingSubmission;
+                }
+                
+                // Validate terms agreement
+                const termsAgreement = document.getElementById('termsAgreement');
+                if (!termsAgreement.checked) {
+                    isValid = false;
+                    document.getElementById('termsError').textContent = 'You must agree to the terms and conditions';
+                    if (!firstInvalidField) firstInvalidField = termsAgreement;
+                }
+            }
+            
+            if (firstInvalidField) {
+                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (firstInvalidField !== document.getElementById('termsAgreement') && 
+                    firstInvalidField !== document.querySelector('.category-option')) {
+                    firstInvalidField.focus();
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function nextStep(currentStep) {
+            if (validateStep(currentStep)) {
+                showStep(currentStep + 1);
+            }
+        }
+        
+        function prevStep(currentStep) {
+            showStep(currentStep - 1);
+        }
+        
+        async function uploadFileToCloudinary(file) {
+            if (!file) return "";
+            
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+            
+            try {
+                const response = await axios.post(
+                    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+                    formData
+                );
+                return response.data.secure_url;
+            } catch (error) {
+                console.error("Upload failed:", error);
+                alert("File upload failed. Please try again.");
+                return "";
+            }
+        }
+        
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (!validateStep(4)) {
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Upload payment proof
+                const paymentProofInput = document.getElementById('paymentProof');
+                let paymentProofUrl = "";
+                if (paymentProofInput.files && paymentProofInput.files[0]) {
+                    paymentProofUrl = await uploadFileToCloudinary(paymentProofInput.files[0]);
+                    if (!paymentProofUrl) throw new Error("Payment proof upload failed");
+                }
+                
+                // Upload writing submission
+                const writingSubmissionInput = document.getElementById('writingSubmission');
+                let writingSubmissionUrl = "";
+                if (writingSubmissionInput.files && writingSubmissionInput.files[0]) {
+                    writingSubmissionUrl = await uploadFileToCloudinary(writingSubmissionInput.files[0]);
+                    if (!writingSubmissionUrl) throw new Error("Writing submission upload failed");
+                }
+                
+                // Create hidden inputs for the URLs
+                let paymentUrlInput = document.getElementById('paymentProofUrl');
+                if (!paymentUrlInput) {
+                    paymentUrlInput = document.createElement('input');
+                    paymentUrlInput.type = 'hidden';
+                    paymentUrlInput.id = 'paymentProofUrl';
+                    paymentUrlInput.name = 'paymentProofUrl';
+                    document.getElementById('registrationForm').appendChild(paymentUrlInput);
+                }
+                paymentUrlInput.value = paymentProofUrl;
+                
+                let writingUrlInput = document.getElementById('writingSubmissionUrl');
+                if (!writingUrlInput) {
+                    writingUrlInput = document.createElement('input');
+                    writingUrlInput.type = 'hidden';
+                    writingUrlInput.id = 'writingSubmissionUrl';
+                    writingUrlInput.name = 'writingSubmissionUrl';
+                    document.getElementById('registrationForm').appendChild(writingUrlInput);
+                }
+                writingUrlInput.value = writingSubmissionUrl;
+                
+                // Submit the form
+                document.getElementById('registrationForm').submit();
+                
+            } catch (error) {
+                alert("Error processing submission. Please try again.");
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        function restartForm() {
+            // Reset form
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'file') {
+                    el.value = '';
+                } else if (el.type === 'checkbox') {
+                    el.checked = false;
+                } else {
+                    el.value = '';
                 }
             });
+            
+            // Reset category selection
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('selectedCategory').value = '';
+            
+            // Reset file name displays
+            document.getElementById('fileName').textContent = '';
+            document.getElementById('writingFileName').textContent = '';
+            
+            // Clear errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+            });
+            document.querySelectorAll('.error').forEach(el => {
+                el.classList.remove('error');
+            });
+            
+            // Hide success message
+            document.getElementById('successContainer').classList.add('hidden');
+            
+            // Show first step
+            showStep(1);
+        }
+        
+        // Setup file uploads
+        document.getElementById('uploadContainer').addEventListener('click', function() {
+            document.getElementById('paymentProof').click();
+        });
+        
+        document.getElementById('paymentProof').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : '';
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('uploadContainer').classList.remove('error');
+            document.getElementById('paymentProofError').textContent = '';
+        });
+        
+        document.getElementById('writingUploadContainer').addEventListener('click', function() {
+            document.getElementById('writingSubmission').click();
+        });
+        
+        document.getElementById('writingSubmission').addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : '';
+            document.getElementById('writingFileName').textContent = fileName;
+            document.getElementById('writingUploadContainer').classList.remove('error');
+            document.getElementById('writingSubmissionError').textContent = '';
+        });
+        
+        // Initialize form submission handler
+        document.getElementById('registrationForm').addEventListener('submit', handleSubmit);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress(1);
         });
     </script>
 </body>
